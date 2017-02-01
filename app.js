@@ -1,36 +1,26 @@
-/* http://127.0.0.1:3000/ */
+const express = require('express')
 
-const http = require('http')
-const fs = require('fs')
+const app = express() // express methods
 
-const server = http.createServer(function(request, response){        
-    console.log(`request was made: ${request.url}`)        
-    if (request.url === '/home' || request.url === '/') {
+app.set('view engine', 'ejs') // ejs as express view engine
 
-        response.writeHead(200, { 'Content-Type': 'text/html' })
-        fs.createReadStream(`${__dirname}/index.html`).pipe(response)
-    
-    } else if (request.url === '/contact-us') {
-
-        response.writeHead(200, { 'Content-Type': 'text/html' })
-        fs.createReadStream(`${__dirname}/contact.html`).pipe(response)
-
-    } else if (request.url === '/api/json') {
-
-        let object = [
-            {name: 'dan', age: 60}, 
-            {name: 'tibor', age: 124}
-        ]
-
-        response.writeHead(200, {'Content-Type': 'application/json'})
-        response.end(JSON.stringify(object))
-    } else {
-
-        response.writeHead(404, { 'Content-Type': 'text/html' })
-        fs.createReadStream(`${__dirname}/404.html`).pipe(response)
-
-    }
+app.get('/', function(req, res) {
+    res.sendFile(`${__dirname}/index.html`)
 })
 
-server.listen(3000, '127.0.0.1')
-console.log('Now listening to port 3000')
+app.get('/contact', function(req, res) {
+    res.sendFile(`${__dirname}/contact.html`)
+})
+
+app.get('/profile/:name', function(req, res) {
+    let data = {
+        age: 60,
+        job: 'coder'
+    }
+    res.render('profile', {
+        person: req.params.name,
+        data: data
+    })
+})
+
+app.listen(3000)
