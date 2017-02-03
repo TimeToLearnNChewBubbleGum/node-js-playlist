@@ -1,30 +1,17 @@
 const express = require('express')
+const todoController = require('./controllers/todoController')
 
 const app = express() // express methods
 
-app.set('view engine', 'ejs') // ejs as express view engine
-app.use('/assets', express.static('assets')) // use middleware
+// setup template engine
+app.set('view engine', 'ejs')
 
-app.get('/', function(req, res) {
-    res.render('index')
-})
+// static files
+app.use(express.static('./public'))
 
-app.get('/contact', function(req, res) {
-    res.render('contact')
-})
+// fire controllers
+todoController(app)
 
-app.get('/profile/:name', function(req, res) {
-
-    let data = {
-        age: 60,
-        job: 'coder',
-        hobbies: ['eating', 'belching', 'napping']
-    }
-
-    res.render('profile', {
-        person: req.params.name,
-        data: data
-    })
-})
-
+// listen to port
 app.listen(3000)
+console.log('You are listening to port 3000')
